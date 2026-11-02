@@ -128,3 +128,8 @@ body{background:var(--ivory)}
   .card-body{padding:14px 14px 16px}
   .pm-name{font-size:24px}
 }
+
+/* Label "Terlaris": pindah ke kolom teks (di depan kategori) supaya tidak menutupi foto */
+.card-feat .card-flag{display:none}
+.card-feat .card-cat{display:inline-flex;flex-wrap:wrap;align-items:center;gap:4px 8px;white-space:nowrap}
+.card-feat .card-cat::before{content:"★ Terlaris";background:linear-gradient(135deg,#C9A660,#A27C38);color:#fff;font-size:10px;letter-spacing:.08em;padding:3px 9px;border-radius:9999px;white-space:nowrap;flex-shrink:0}
