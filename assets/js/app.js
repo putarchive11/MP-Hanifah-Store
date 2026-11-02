@@ -273,6 +273,7 @@
   function calc(areaText) {
     var sub = cartTotal();
     var disc = DC && sub >= DC.minPurchase ? Math.round(sub * DC.percent / 100) : 0;
+    if (disc && DC.maxDiscount > 0) disc = Math.min(disc, DC.maxDiscount);
     var shipEligible = !!FS && sub >= FS.minPurchase;
     return {
       subtotal: sub,
@@ -293,8 +294,8 @@
     if (DC) cards.push({
       icon: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>',
       title: DC.title,
-      desc: "Potongan " + DC.percent + "% dari total harga barang, otomatis dihitung di keranjang.",
-      term: "Min. belanja " + rupiah(DC.minPurchase)
+      desc: "Potongan " + DC.percent + "% dari total harga barang" + (DC.maxDiscount > 0 ? ", maksimal " + rupiah(DC.maxDiscount) : "") + ". Otomatis dihitung di keranjang.",
+      term: "Min. belanja " + rupiah(DC.minPurchase) + (DC.maxDiscount > 0 ? " · Maks. potongan " + rupiah(DC.maxDiscount) : "")
     });
     var sec = $("#promo");
     if (!cards.length) { if (sec) sec.classList.add("hidden"); return; }
@@ -320,8 +321,8 @@
   function promoHint(c) {
     if (!c.subtotal) return "";
     if (FS && c.subtotal < FS.minPurchase) return "Tambah " + rupiah(FS.minPurchase - c.subtotal) + " lagi untuk gratis ongkir Jabodetabek.";
-    if (DC && c.subtotal < DC.minPurchase) return "Tambah " + rupiah(DC.minPurchase - c.subtotal) + " lagi untuk diskon " + DC.percent + "%.";
-    if (DC) return "Diskon " + DC.percent + "% sudah diterapkan.";
+    if (DC && c.subtotal < DC.minPurchase) return "Tambah " + rupiah(DC.minPurchase - c.subtotal) + " lagi untuk diskon " + DC.percent + "%" + (DC.maxDiscount > 0 ? " (maks. " + rupiah(DC.maxDiscount) + ")" : "") + ".";
+    if (DC) return "Diskon " + DC.percent + "% sudah diterapkan" + (DC.maxDiscount > 0 && c.discount >= DC.maxDiscount ? " (potongan maksimal " + rupiah(DC.maxDiscount) + ")" : "") + ".";
     return "";
   }
   function updateShipStatus() {
@@ -417,7 +418,7 @@
     });
     var c = calc(d.kota + " " + d.kecamatan);
     lines.push("", "Subtotal: " + rupiah(c.subtotal));
-    if (c.discount) lines.push("Diskon " + DC.percent + "%: -" + rupiah(c.discount));
+    if (c.discount) lines.push("Diskon " + DC.percent + "%" + (DC.maxDiscount > 0 ? " (maks. " + rupiah(DC.maxDiscount) + ")" : "") + ": -" + rupiah(c.discount));
     lines.push("Total barang: *" + rupiah(c.total) + "*");
     if (c.freeShip) lines.push("Ongkir JNE: *GRATIS* (promo " + FS.title + ")");
     else lines.push("Ongkir JNE: menunggu konfirmasi admin");

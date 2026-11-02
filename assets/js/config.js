@@ -34,8 +34,9 @@ window.STORE_CONFIG = {
     discount: {
       active: true,
       minPurchase: 500000,          // minimal belanja
-      percent: 30,                  // besar diskon (%)
-      title: "Diskon 30%"
+      percent: 50,                  // besar diskon (%)
+      maxDiscount: 50000,           // potongan maksimal (Rp); 0 = tanpa batas
+      title: "Diskon 50%"
     }
   }
 };
